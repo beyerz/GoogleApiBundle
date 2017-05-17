@@ -1,0 +1,31 @@
+{
+    "name": "beyerz/google-api-bundle",
+    "description": "Symfony bundle to wrap the google api",
+    "type": "symfony-bundle",
+    "authors": [
+        {
+            "name": "Lance Bailey",
+            "homepage": "http://www.me-vs-php.com"
+        }
+    ],
+    "keywords": [
+        "Symfony",
+        "Symfony2",
+        "google",
+        "google api"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": ">=5.5",
+        "symfony/symfony": "2.8.*"
+    },
+    "require-dev" :{
+        "symfony/phpunit-bridge": "~3",
+        "google/apiclient": "2.1.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Beyerz\\SimpleHMVCBundle\\": ""
+        }
+    }
+}

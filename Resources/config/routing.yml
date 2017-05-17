@@ -1,0 +1,3 @@
+beyerz_google_api_homepage:
+    path:     /
+    defaults: { _controller: BeyerzGoogleApiBundle:Default:index }
