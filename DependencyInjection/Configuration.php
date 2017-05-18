@@ -12,6 +12,14 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
+    const APPLICATION_NAME = 'application_name';
+    const CREDENTIALS_MANAGER = 'credentials_manager';
+    const CLIENT_SECRET_PATH = 'client_secret_path';
+    const SERVICES = 'services';
+    const SERVICE_GMAIL = 'gmail';
+    const ACCESS_TYPE = 'access_type';
+    const SCOPES = 'scopes';
+
     /**
      * {@inheritdoc}
      */
@@ -21,13 +29,14 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('beyerz_google_api');
 
         $rootNode->children()
-            ->scalarNode('application_name')->end()
-            ->scalarNode('credentials_manager')->end()
-            ->scalarNode('client_secret_path')->end()
-            ->arrayNode('services')
+            ->scalarNode(self::APPLICATION_NAME)->end()
+            ->scalarNode(self::CREDENTIALS_MANAGER)->end()
+            ->scalarNode(self::CLIENT_SECRET_PATH)->end()
+            ->arrayNode(self::SERVICES)
                 ->prototype('array')
                     ->children()
-                        ->arrayNode('scopes')->prototype('scalar')->end()
+                        ->scalarNode(self::ACCESS_TYPE)->defaultValue('online')->end()
+                        ->arrayNode(self::SCOPES)->prototype('scalar')->end()
                     ->end()
                 ->end()
             ->end()

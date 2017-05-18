@@ -9,7 +9,7 @@
 namespace Beyerz\GoogleApiBundle\Manager;
 
 
-class credentialsManager
+class CredentialsManager
 {
     /**
      * @var string
@@ -20,9 +20,9 @@ class credentialsManager
      * credentialsManager constructor.
      * @param string $credentialsPath
      */
-    public function __construct($credentialsPath=null)
+    public function __construct($credentialsPath = null)
     {
-        if(!is_null($credentialsPath)) {
+        if (!is_null($credentialsPath)) {
             $this->credentialsPath = $credentialsPath;
         }
         $this->credentialsPath = $this->expandHomeDirectory($this->credentialsPath);
@@ -31,14 +31,31 @@ class credentialsManager
     /**
      * @return bool
      */
-    public function hasCredentials(){
-        return file_exists($this->credentialsPath);
+    public function hasCredentials($user)
+    {
+        if (file_exists($this->credentialsPath)) {
+            $db = $this->getDB();
+            return array_key_exists($user,$db);
+        }
+
+        return false;
     }
 
     /**
      * @return array
      */
-    public function getCredentials(){
+    public function getCredentials($user)
+    {
+        $db = $this->getDB();
+
+        return $db[$user];
+    }
+
+    public function getDB(){
+        if (!file_exists($this->credentialsPath)) {
+            return [];
+        }
+
         return json_decode(file_get_contents($this->credentialsPath), true);
     }
 
@@ -46,11 +63,15 @@ class credentialsManager
      * @param array $credentials
      * @return bool|int
      */
-    public function createCredentials(array $credentials){
-        if(!file_exists(dirname($this->credentialsPath))) {
+    public function createCredentials($user, array $credentials)
+    {
+        if (!file_exists(dirname($this->credentialsPath))) {
             mkdir(dirname($this->credentialsPath), 0700, true);
         }
-        return file_put_contents($this->credentialsPath, json_encode($credentials));
+        $db = $this->getDB();
+        $db = array_merge($db, [$user => $credentials]);
+
+        return file_put_contents($this->credentialsPath, json_encode($db));
     }
 
     /**
@@ -65,11 +86,13 @@ class credentialsManager
      * @param $path
      * @return mixed
      */
-    private function expandHomeDirectory($path) {
+    private function expandHomeDirectory($path)
+    {
         $homeDirectory = getenv('HOME');
         if (empty($homeDirectory)) {
             $homeDirectory = getenv('HOMEDRIVE') . getenv('HOMEPATH');
         }
+
         return str_replace('~', realpath($homeDirectory), $path);
     }
 

@@ -23,7 +23,6 @@ class BeyerzGoogleApiExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $this->exposeConfigToParameters($config, $container);
-//        var_dump($config);die;
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
@@ -32,15 +31,25 @@ class BeyerzGoogleApiExtension extends Extension
     private function exposeConfigToParameters(array $config, ContainerBuilder $container)
     {
         $base = 'beyerz_google_api';
-        if (isset($config['application_name'])) {
-            $container->setParameter(sprintf('%s.%s', $base, 'application_name'), $config['application_name']);
-        }
-        if (isset($config['client_secret_path'])) {
-            $container->setParameter(sprintf('%s.%s', $base, 'client_secret_path'), ltrim($config['client_secret_path'],"/"));
+        if (isset($config[Configuration::APPLICATION_NAME])) {
+            $container->setParameter(sprintf('%s.%s', $base, Configuration::APPLICATION_NAME), $config[Configuration::APPLICATION_NAME]);
         }
 
-        if (isset($config['services']['gmail']['scopes'])) {
-            $container->setParameter(sprintf('%s.%s.%s.%s', $base, 'service', 'gmail', 'scopes'), implode(" ", $config['services']['gmail']['scopes']));
+        if (isset($config[Configuration::CREDENTIALS_MANAGER])) {
+            if (!class_exists($config[Configuration::CREDENTIALS_MANAGER])) {
+                throw new \Exception("Defined class in config for credential manager does not exist");
+            }
+            $container->setParameter(sprintf('%s.%s.class', $base, Configuration::CREDENTIALS_MANAGER), $config[Configuration::CREDENTIALS_MANAGER]);
+        }
+
+        if (isset($config[Configuration::CLIENT_SECRET_PATH])) {
+            $container->setParameter(sprintf('%s.%s', $base, Configuration::CLIENT_SECRET_PATH), ltrim($config[Configuration::CLIENT_SECRET_PATH], "/"));
+        }
+
+        foreach ($config[Configuration::SERVICES] as $serviceName => $serviceConfig) {
+            $container->setParameter(sprintf('%s.%s.%s.%s', $base, Configuration::SERVICES, $serviceName, Configuration::ACCESS_TYPE), $serviceConfig[Configuration::ACCESS_TYPE]);
+            $container->setParameter(sprintf('%s.%s.%s.%s', $base, Configuration::SERVICES, $serviceName, Configuration::SCOPES), $serviceConfig[Configuration::SCOPES]);
         }
     }
+
 }

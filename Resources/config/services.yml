@@ -1,4 +1,26 @@
+imports:
+  - { resource: google_services.yml }
+
+parameters:
+    beyerz_google_api.google_client.class: Google_Client
+    beyerz_google_api.credentials_manager.class: Beyerz\GoogleApiBundle\Manager\CredentialsManager
+    beyerz_google_api.service_provider.class: Beyerz\GoogleApiBundle\Service\ServiceProvider
 services:
-#    beyerz_google_api.example:
-#        class: Beyerz\GoogleApiBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]
+    beyerz_google_api.google_client:
+      class: "%beyerz_google_api.google_client.class%"
+
+    beyerz_google_api.credentials_manager:
+      class: "%beyerz_google_api.credentials_manager.class%"
+
+#####
+# Google Proxy-Services
+#####
+    beyerz_google_api.proxy_service.factory:
+      class: Beyerz\GoogleApiBundle\Service\ServiceFactory
+      calls:
+        - [ setContainer, ["@service_container"]]
+
+    beyerz_google_api.proxy_service.gmail:
+      class: "%beyerz_google_api.service_provider.class%"
+      factory: "beyerz_google_api.proxy_service.factory:generateService"
+      arguments: ["@beyerz_google_api.credentials_manager","@beyerz_google_api.service.gmail"]
