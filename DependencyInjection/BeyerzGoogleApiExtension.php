@@ -3,7 +3,9 @@
 namespace Beyerz\GoogleApiBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
@@ -14,6 +16,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class BeyerzGoogleApiExtension extends Extension
 {
+    const TAG_CONTAINER_AWARE = 'beyerz_google_api.container_aware';
     /**
      * {@inheritdoc}
      */
@@ -36,10 +39,18 @@ class BeyerzGoogleApiExtension extends Extension
         }
 
         if (isset($config[Configuration::CREDENTIALS_MANAGER])) {
-            if (!class_exists($config[Configuration::CREDENTIALS_MANAGER])) {
+            $credentialsManagerClass = $config[Configuration::CREDENTIALS_MANAGER];
+            if (!class_exists($credentialsManagerClass)) {
                 throw new \Exception("Defined class in config for credential manager does not exist");
             }
-            $container->setParameter(sprintf('%s.%s.class', $base, Configuration::CREDENTIALS_MANAGER), $config[Configuration::CREDENTIALS_MANAGER]);
+            $credentialsManager = new Definition($credentialsManagerClass);
+
+            $uses = class_uses($credentialsManagerClass);
+            if (array_key_exists(ContainerAwareTrait::class, $uses)) {
+                $credentialsManager->addTag(self::TAG_CONTAINER_AWARE);
+            }
+
+            $container->setDefinition('beyerz_google_api.credentials_manager',$credentialsManager);
         }
 
         if (isset($config[Configuration::CLIENT_SECRET_PATH])) {

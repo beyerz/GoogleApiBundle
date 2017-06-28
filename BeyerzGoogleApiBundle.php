@@ -2,6 +2,7 @@
 
 namespace Beyerz\GoogleApiBundle;
 
+use Beyerz\GoogleApiBundle\DependencyInjection\Compiler\ContainerAwarePass;
 use Beyerz\GoogleApiBundle\DependencyInjection\Compiler\GoogleServicePass;
 use Beyerz\GoogleApiBundle\DependencyInjection\Compiler\GoogleClientPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -13,5 +14,6 @@ class BeyerzGoogleApiBundle extends Bundle
     {
         $container->addCompilerPass(new GoogleClientPass());
         $container->addCompilerPass(new GoogleServicePass());
+        $container->addCompilerPass(new ContainerAwarePass());
     }
 }

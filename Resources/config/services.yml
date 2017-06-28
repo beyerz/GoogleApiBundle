@@ -1,11 +1,7 @@
 parameters:
     beyerz_google_api.google_client.class: Google_Client
-    beyerz_google_api.credentials_manager.class: Beyerz\GoogleApiBundle\Manager\CredentialsManager
     beyerz_google_api.service_provider.class: Beyerz\GoogleApiBundle\Service\ServiceProvider
 services:
     beyerz_google_api.google_client:
       class: "%beyerz_google_api.google_client.class%"
       shared: false
-
-    beyerz_google_api.credentials_manager:
-      class: "%beyerz_google_api.credentials_manager.class%"
