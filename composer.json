@@ -12,7 +12,8 @@
         "Symfony",
         "Symfony2",
         "google",
-        "google api"
+        "google api",
+        "google api bundle"
     ],
     "license": "MIT",
     "require": {
@@ -25,7 +26,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Beyerz\\SimpleHMVCBundle\\": ""
+            "Beyerz\\GoogleApiBundle\\": ""
         }
     }
 }
