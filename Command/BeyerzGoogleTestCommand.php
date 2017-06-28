@@ -10,16 +10,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-define('APPLICATION_NAME', 'Gmail API PHP Quickstart');
-define('CREDENTIALS_PATH', '~/.credentials/gmail-php-quickstart.json');
-define('CLIENT_SECRET_PATH', __DIR__ . '/client_secret.json');
-// If modifying these scopes, delete your previously saved credentials
-// at ~/.credentials/gmail-php-quickstart.json
-define('SCOPES', implode(' ', [
-        \Google_Service_Gmail::GMAIL_READONLY,
-    ]
-));
-
 class BeyerzGoogleTestCommand extends ContainerAwareCommand
 {
 
@@ -34,13 +24,74 @@ class BeyerzGoogleTestCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-//        $service = $this->getContainer()->get('beyerz_google_api.service.gmail');
-        $service = $this->getContainer()->get('beyerz_google_api.proxy_service.gmail');
-//        die;
+        $service = $this->getContainer()->get('beyerz_google_api.service.gmail');
+        /** @var ServiceProvider $service */
+//        $service = $this->getContainer()->get('beyerz_google_api.service.plus');
+//        $service = $this->getContainer()->get('beyerz_google_api.service.people');
+//        $service = $this->getContainer()->get('beyerz_google_api.service.oauth2');
 
+
+//        var_dump($service->getResources());die;
+
+//        die;
 //        $user = '108384709513204140011'; //lance
 //        $user = '104937493445230534804'; //peleg
-        $user = '116734602578676449600'; //eli
+//        $user = '116734602578676449600'; //eli
+//var_dump($service->userinfo($user)->get());
+//die;
+
+        $messages = $service->users_messages($user)->listUsersMessages($user);
+
+        foreach ($messages as $message){
+            dump($service->users_messages($user)->get($user, $message['id']));
+
+        }
+
+        die;
+
+//        var_dump($service->credentials($user)->getClient()->getAccessToken());die;
+//        var_dump($service->credentials($user)->tokeninfo(['id_token'=> $service->getClient()->getAccessToken()['id_token']]));
+//        die;
+
+//        var_dump(get_class_methods($service->people($user)));
+//        var_dump(($service->people($user)->get('people/me',['requestMask.includeField' => 'person.addresses,person.age_ranges,person.biographies,person.birthdays,person.bragging_rights,person.cover_photos,person.email_addresses,person.events,person.genders,person.im_clients,person.interests,person.locales,person.memberships,person.metadata,person.names,person.nicknames,person.occupations,person.organizations,person.phone_numbers,person.photos,person.relations,person.relationship_interests,person.relationship_statuses,person.residences,person.skills,person.taglines,person.urls'])));
+//        $includeFields = [
+//            'person.addresses',
+//            'person.age_ranges',
+//            'person.biographies',
+//            'person.birthdays',
+//            'person.bragging_rights',
+//            'person.cover_photos',
+//            'person.email_addresses',
+//            'person.events',
+//            'person.genders',
+//            'person.im_clients',
+//            'person.interests',
+//            'person.locales',
+//            'person.memberships',
+//            'person.metadata',
+//            'person.names',
+//            'person.nicknames',
+//            'person.occupations',
+//            'person.organizations',
+//            'person.phone_numbers',
+//            'person.photos',
+//            'person.relations',
+//            'person.relationship_interests',
+//            'person.relationship_statuses',
+//            'person.residences',
+//            'person.skills',
+//            'person.taglines',
+//            'person.urls',
+//        ];
+//        var_dump(($service->people_connections($user)->listPeopleConnections('people/me',['requestMask.includeField'=>implode(",",$includeFields)])));
+//        die;
+
+        var_dump($service->activities($user)->listPeople($user));
+        var_dump($service->comments($user)->listPeople($user));
+        var_dump($service->people($user)->listPeople($user));
+
+            die;
 
         $results = $service->users_labels($user)->listUsersLabels($user);
 

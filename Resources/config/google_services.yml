@@ -1,8 +1,0 @@
-parameters:
-    beyerz_google_api.google_service.gmail.class: Google_Service_Gmail
-
-services:
-    beyerz_google_api.service.gmail:
-      class: "%beyerz_google_api.google_service.gmail.class%"
-      arguments:
-        - "@beyerz_google_api.google_client"

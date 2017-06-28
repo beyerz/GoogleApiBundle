@@ -54,13 +54,16 @@ class ServiceProvider
      */
     public function __call($name, $arguments)
     {
-        if(method_exists($this->service,$name)){
-            return call_user_func_array([$this->service,$name],$arguments);
+
+        if (method_exists($this->service, $name)) {
+            return call_user_func_array([$this->service, $name], $arguments);
         }
-        if(property_exists($this->service,$name) && $this->service->{$name} instanceof \Google_Service_Resource){
+
+        if (property_exists($this->service, $name) && $this->service->{$name} instanceof \Google_Service_Resource) {
             //calling a property
             $user = $arguments[0];
             $this->credentials($user);
+
             return $this->service->{$name};
         }
     }
@@ -68,24 +71,28 @@ class ServiceProvider
     /**
      * @return array
      */
-    public function getResources(){
+    public function getResources()
+    {
         $rf = new \ReflectionClass($this->service);
         $resources = [];
-        foreach ($rf->getProperties() as $property){
-            if($property->getValue($this->service) instanceof \Google_Service_Resource) {
-                $resources[] = sprintf('%s(int $user)',$property->getName());
+        foreach ($rf->getProperties() as $property) {
+            if ($property->isPublic() && $property->getValue($this->service) instanceof \Google_Service_Resource) {
+                $resources[] = sprintf('%s(int $user)', $property->getName());
             }
         }
+
         return $resources;
     }
 
     /**
      * @param $user
+     * @return $this
      */
-    private function credentials($user){
-        if($this->credentialsManager->hasCredentials($user)){
+    public function credentials($user)
+    {
+        if ($this->credentialsManager->hasCredentials($user)) {
             $credentials = $this->credentialsManager->getCredentials($user);
-        }else{
+        } else {
             // Request authorization from the user.
             $authUrl = $this->client->createAuthUrl();
             printf("Open the following link in your browser:\n%s\n", $authUrl);
@@ -95,7 +102,7 @@ class ServiceProvider
             // Exchange authorization code for an access token.
             $credentials = $this->client->fetchAccessTokenWithAuthCode($authCode);
 
-            if($this->credentialsManager->createCredentials($user, $credentials)) {
+            if ($this->credentialsManager->createCredentials($user, $credentials)) {
                 printf("Credentials saved to %s\n", $this->credentialsManager->getCredentialsPath());
             }
         }
@@ -106,6 +113,8 @@ class ServiceProvider
             $this->client->fetchAccessTokenWithRefreshToken($this->client->getRefreshToken());
             $this->credentialsManager->createCredentials($user, $this->client->getAccessToken());
         }
+
+        return $this;
     }
 
 }

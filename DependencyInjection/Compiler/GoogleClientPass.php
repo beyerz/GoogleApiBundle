@@ -23,18 +23,18 @@ class GoogleClientPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if(!$container->hasDefinition('beyerz_google_api.google_client')){
+        if (!$container->hasDefinition('beyerz_google_api.google_client')) {
             throw new \Exception('beyerz_google_api.google_client service not found, so google client could not be created');
         }
 
         //get required client config
         $config = [
-                'application_name' => $container->getParameter('beyerz_google_api.application_name'),
-                'access_type' => $container->getParameter('beyerz_google_api.services.gmail.access_type'),
-            ];
+            'application_name' => $container->getParameter('beyerz_google_api.application_name'),
+            'include_granted_scopes' => true,
+        ];
         $definition = $container->getDefinition('beyerz_google_api.google_client');
         $definition->addArgument($config);
-        $definition->addMethodCall('setScopes', [$container->getParameter('beyerz_google_api.services.gmail.scopes')]);
-        $definition->addMethodCall('setAuthConfig',[sprintf('%s/%s',$container->getParameter('kernel.root_dir'),$container->getParameter('beyerz_google_api.client_secret_path'))]);
+        $definition->addMethodCall('addScope', $container->getParameter('beyerz_google_api.scopes'));
+        $definition->addMethodCall('setAuthConfig', [sprintf('%s/%s', $container->getParameter('kernel.root_dir'), $container->getParameter('beyerz_google_api.client_secret_path'))]);
     }
 }

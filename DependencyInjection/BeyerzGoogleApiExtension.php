@@ -46,9 +46,18 @@ class BeyerzGoogleApiExtension extends Extension
             $container->setParameter(sprintf('%s.%s', $base, Configuration::CLIENT_SECRET_PATH), ltrim($config[Configuration::CLIENT_SECRET_PATH], "/"));
         }
 
+        if (isset($config[Configuration::SCOPES])) {
+            $container->setParameter(sprintf('%s.%s', $base,Configuration::SCOPES), $config[Configuration::SCOPES]);
+        }
+
+        $services = [];
         foreach ($config[Configuration::SERVICES] as $serviceName => $serviceConfig) {
             $container->setParameter(sprintf('%s.%s.%s.%s', $base, Configuration::SERVICES, $serviceName, Configuration::ACCESS_TYPE), $serviceConfig[Configuration::ACCESS_TYPE]);
-            $container->setParameter(sprintf('%s.%s.%s.%s', $base, Configuration::SERVICES, $serviceName, Configuration::SCOPES), $serviceConfig[Configuration::SCOPES]);
+            array_push($services, $serviceName);
+        }
+        
+        if (!empty($services)) {
+            $container->setParameter(sprintf('%s.%s', $base, Configuration::SERVICES), $services);
         }
     }
 
