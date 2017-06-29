@@ -35,8 +35,6 @@ class CredentialsManager implements CredentialsManagerInterface
     {
         if (file_exists($this->credentialsPath)) {
             $db = $this->getDB();
-            dump($db);
-            die;
             return array_key_exists($user,$db);
         }
 
