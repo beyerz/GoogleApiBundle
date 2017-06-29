@@ -9,7 +9,7 @@
 namespace Beyerz\GoogleApiBundle\Manager;
 
 
-class CredentialsManager
+class CredentialsManager implements CredentialsManagerInterface
 {
     /**
      * @var string
@@ -35,6 +35,8 @@ class CredentialsManager
     {
         if (file_exists($this->credentialsPath)) {
             $db = $this->getDB();
+            dump($db);
+            die;
             return array_key_exists($user,$db);
         }
 

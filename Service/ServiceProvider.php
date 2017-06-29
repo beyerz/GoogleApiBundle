@@ -9,7 +9,7 @@
 namespace Beyerz\GoogleApiBundle\Service;
 
 
-use Beyerz\GoogleApiBundle\Manager\CredentialsManager;
+use Beyerz\GoogleApiBundle\Manager\CredentialsManagerInterface;
 
 /**
  * Class ServiceProvider
@@ -21,7 +21,7 @@ class ServiceProvider
 {
 
     /**
-     * @var CredentialsManager
+     * @var CredentialsManagerInterface
      */
     private $credentialsManager;
 
@@ -37,10 +37,10 @@ class ServiceProvider
 
     /**
      * ServiceProvider constructor.
-     * @param CredentialsManager $credentialsManager
+     * @param CredentialsManagerInterface $credentialsManager
      * @param \Google_Service $service
      */
-    public function __construct(CredentialsManager $credentialsManager, \Google_Service $service)
+    public function __construct(CredentialsManagerInterface $credentialsManager, \Google_Service $service)
     {
         $this->credentialsManager = $credentialsManager;
         $this->service = $service;
