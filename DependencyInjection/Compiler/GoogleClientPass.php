@@ -9,8 +9,10 @@
 namespace Beyerz\GoogleApiBundle\DependencyInjection\Compiler;
 
 
+use Beyerz\GoogleApiBundle\Cache\NullCacheItemPool;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 
 class GoogleClientPass implements CompilerPassInterface
 {
@@ -19,6 +21,7 @@ class GoogleClientPass implements CompilerPassInterface
      * You can modify the container here before it is dumped to PHP code.
      *
      * @param ContainerBuilder $container
+     *
      * @throws \Exception
      */
     public function process(ContainerBuilder $container)
@@ -29,12 +32,13 @@ class GoogleClientPass implements CompilerPassInterface
 
         //get required client config
         $config = [
-            'application_name' => $container->getParameter('beyerz_google_api.application_name'),
+            'application_name'       => $container->getParameter('beyerz_google_api.application_name'),
             'include_granted_scopes' => true,
         ];
         $definition = $container->getDefinition('beyerz_google_api.google_client');
         $definition->addArgument($config);
         $definition->addMethodCall('addScope', $container->getParameter('beyerz_google_api.scopes'));
+        $definition->addMethodCall('setCache', [new Definition(NullCacheItemPool::class)]);
         $definition->addMethodCall('setAuthConfig', [sprintf('%s/%s', $container->getParameter('kernel.root_dir'), $container->getParameter('beyerz_google_api.client_secret_path'))]);
     }
 }
